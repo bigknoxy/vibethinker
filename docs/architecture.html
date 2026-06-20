@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeThinker — Architecture</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; background: #1e1e2e; color: #cdd6f4; line-height: 1.6; }
+nav { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem; }
+nav .logo { font-size: 1.3rem; font-weight: 800; color: #cba6f7; text-decoration: none; letter-spacing: -0.02em; }
+nav .links { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+nav .links a { color: #a6adc8; text-decoration: none; padding: 0.4rem 0.7rem; border-radius: 6px; font-size: 0.9rem; font-weight: 500; transition: all 0.15s; }
+nav .links a:hover, nav .links a.active { background: #313244; color: #cdd6f4; }
+header { border-bottom: 1px solid #313244; background: #181825; }
+main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem; color: #cdd6f4; letter-spacing: -0.02em; }
+h1 span { color: #cba6f7; }
+h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; color: #cdd6f4; }
+h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #cba6f7; }
+p { color: #a6adc8; margin-bottom: 1rem; line-height: 1.7; }
+a { color: #cba6f7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { background: #313244; padding: 0.15em 0.4em; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.88em; }
+pre { background: #11111b; border: 1px solid #313244; border-radius: 10px; padding: 1.2rem; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.85rem; line-height: 1.55; color: #cdd6f4; margin: 1.2rem 0; }
+pre .hl { color: #a6e3a1; }
+pre .hl2 { color: #cba6f7; }
+pre .hl3 { color: #f38ba8; }
+pre .hl4 { color: #fab387; }
+.diagram { background: #11111b; border: 1px solid #313244; border-radius: 12px; padding: 2rem; margin: 1.5rem 0; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.8rem; line-height: 1.5; color: #cdd6f4; white-space: pre; }
+.diagram .box { color: #cba6f7; }
+.diagram .arrow { color: #585b70; }
+.diagram .label { color: #a6e3a1; }
+.diagram .hl { color: #f38ba8; }
+.comp-list { list-style: none; display: grid; gap: 1.5rem; margin: 1.5rem 0; }
+.comp-list li { background: #181825; border: 1px solid #313244; border-radius: 10px; padding: 1.5rem; }
+.comp-list li strong { color: #cba6f7; display: block; font-size: 1.05rem; margin-bottom: 0.3rem; }
+.comp-list li .file { color: #a6e3a1; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.85rem; }
+.comp-list li p { color: #a6adc8; font-size: 0.95rem; margin-bottom: 0; }
+.flow { background: #181825; border: 1px solid #313244; border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.9rem; line-height: 1.8; color: #a6e3a1; }
+.file-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+.file-table th, .file-table td { text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid #313244; font-size: 0.9rem; }
+.file-table th { color: #a6adc8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.78rem; }
+.file-table td { color: #cdd6f4; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.85rem; }
+.file-table tr:hover td { background: #181825; }
+footer { border-top: 1px solid #313244; text-align: center; padding: 1.5rem; color: #585b70; font-size: 0.85rem; margin-top: 3rem; }
+footer a { color: #585b70; text-decoration: none; }
+footer a:hover { color: #a6adc8; }
+@media (max-width: 640px) { h1 { font-size: 1.5rem; } .diagram { font-size: 0.65rem; padding: 1rem; } nav { flex-direction: column; align-items: stretch; } nav .links { justify-content: center; } }
+</style>
+</head>
+<body>
+<header>
+<nav>
+  <a href="index.html" class="logo">VibeThinker</a>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="architecture.html" class="active">Architecture</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="why.html">Why</a>
+    <a href="api.html">API</a>
+    <a href="index.html#install">Install</a>
+  </div>
+</nav>
+</header>
+<main>
+<h1>System <span>Architecture</span></h1>
+
+<div class="diagram">┌──────────────────────────────────────────────────────────┐
+│                        ┌──────────────┐                   │
+│  ┌──────────┐          │   FastAPI    │   ┌────────────┐  │
+│  │   CLI    │ ────────&gt; │   Server     │──&gt;│  Worker    │  │
+│  │ vibecli  │  HTTP     │ port 8002   │    │ subprocess │  │
+│  │ .py      │  POST     │ /v1/chat/   │    │ .py       │  │
+│  └──────────┘          │ completions │    └─────┬──────┘  │
+│        │               └──────────────┘          │         │
+│        │                                          │         │
+│        │               ┌──────────────┐           │         │
+│        └──────────────&gt;│  Watchdog    │           │         │
+│         health poll    │  watchdog    │           │         │
+│                        │  .sh         │           │         │
+│                        └──────────────┘           │         │
+│        ┌──────────────┐                            │         │
+│        │  systemd     │                            ▼         │
+│        │  .service    │                    ┌────────────┐  │
+│        │              │                    │ llama-cpp- │  │
+│        │ Restart=on-  │                    │ python     │  │
+│        │ failure      │                    │ CPU        │  │
+│        └──────────────┘                    └─────┬──────┘  │
+│                                                  │          │
+│                                                  ▼          │
+│                                         ┌──────────────┐   │
+│                                         │  Qwen2 Q8_0  │   │
+│                                         │  3.1B GGUF   │   │
+│                                         └──────────────┘   │
+└──────────────────────────────────────────────────────────┘</div>
+
+<h2>Components</h2>
+<ul class="comp-list">
+  <li>
+    <strong>CLI</strong>
+    <span class="file">vibecli.py</span>
+    <p>8 commands: <code>prompt</code>, <code>chat</code>, <code>code</code>, <code>think</code>, <code>explain</code>, <code>sh</code>, <code>review</code>, <code>eval</code>. Retry logic with exponential backoff (5s, 10s, 20s) and server health polling via <code>/v1/models</code>.</p>
+  </li>
+  <li>
+    <strong>Server</strong>
+    <span class="file">serve_vibethinker.py</span>
+    <p>FastAPI server running on port <code>8002</code>. Exposes <code>POST /v1/chat/completions</code> (OpenAI-compatible) and <code>GET /v1/models</code>. Spawns a worker subprocess per request for crash isolation.</p>
+  </li>
+  <li>
+    <strong>Worker</strong>
+    <span class="file">vibe_worker.py</span>
+    <p>Isolated subprocess that loads the GGUF model, generates a response via llama-cpp-python, and exits. If the model segfaults (a known issue after ~12-15 requests), the server stays alive.</p>
+  </li>
+  <li>
+    <strong>Watchdog</strong>
+    <span class="file">watchdog.sh</span>
+    <p>Shell script that polls <code>/v1/models</code> every 10 seconds. If 3 consecutive health checks fail, it restarts the server. Catches crashes faster than systemd alone (~30s detection + 10s reload).</p>
+  </li>
+  <li>
+    <strong>Model</strong>
+    <span class="file">Qwen2-3.1B-Q8_0.gguf</span>
+    <p>Self-converted Q8_0 GGUF, 3.1B parameters, 3.1 GB file size. Qwen2 architecture. Community GGUFs were broken, so we converted from the HuggingFace source using <code>llama.cpp/convert.py</code>.</p>
+  </li>
+  <li>
+    <strong>Systemd Service</strong>
+    <span class="file">vibethinker.service</span>
+    <p>Systemd unit with <code>Restart=on-failure</code>. Ensures the server survives boot and recovers from unexpected exits.</p>
+  </li>
+</ul>
+
+<h2>Data Flow</h2>
+<div class="flow">vibe prompt "list all pdfs in /tmp"           <span style="color:#585b70;"># CLI command</span>
+  → chat()                                      <span style="color:#585b70;"># builds OpenAI-style payload</span>
+  → POST /v1/chat/completions                   <span style="color:#585b70;"># HTTP to FastAPI</span>
+  → serve_vibethinker.py                        <span style="color:#585b70;"># parses request, spawns worker</span>
+  → vibe_worker.py                              <span style="color:#585b70;"># loads GGUF into memory</span>
+  → llama-cpp-python Python API                 <span style="color:#585b70;"># CPU inference</span>
+  → Qwen2-3.1B-Q8_0 GGUF model                  <span style="color:#585b70;"># generates response</span>
+  → &lt;think&gt;reasoning&lt;/think&gt;answer               <span style="color:#585b70;"># structured output</span>
+  → response JSON ⟶ CLI stdout                  <span style="color:#585b70;"># printed to terminal</span></div>
+
+<h2>File Listing</h2>
+<table class="file-table">
+  <tr><th>File</th><th>Size</th><th>Purpose</th></tr>
+  <tr><td>serve_vibethinker.py</td><td>~4.5 KB</td><td>FastAPI server, OpenAI-compatible endpoints</td></tr>
+  <tr><td>vibecli.py</td><td>~6.2 KB</td><td>CLI entry point, 8 commands, retry logic</td></tr>
+  <tr><td>vibe_worker.py</td><td>~3.1 KB</td><td>Subprocess worker, model load &amp; inference</td></tr>
+  <tr><td>watchdog.sh</td><td>~1.2 KB</td><td>Health polling and auto-restart</td></tr>
+  <tr><td>vibethinker.service</td><td>~0.5 KB</td><td>Systemd unit definition</td></tr>
+  <tr><td>Qwen2-3.1B-Q8_0.gguf</td><td>3.1 GB</td><td>Quantized model weights</td></tr>
+  <tr><td>vibe_eval.py</td><td>~5.0 KB</td><td>Eval framework, 27 tasks, 4 grader types</td></tr>
+</table>
+</main>
+<footer>Keep documentation in sync &mdash; <a href="https://github.com/your-org/vibethinker">VibeThinker</a></footer>
+</body>
+</html>

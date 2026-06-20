@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeThinker — API Reference</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; background: #1e1e2e; color: #cdd6f4; line-height: 1.6; }
+nav { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem; }
+nav .logo { font-size: 1.3rem; font-weight: 800; color: #cba6f7; text-decoration: none; letter-spacing: -0.02em; }
+nav .links { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+nav .links a { color: #a6adc8; text-decoration: none; padding: 0.4rem 0.7rem; border-radius: 6px; font-size: 0.9rem; font-weight: 500; transition: all 0.15s; }
+nav .links a:hover, nav .links a.active { background: #313244; color: #cdd6f4; }
+header { border-bottom: 1px solid #313244; background: #181825; }
+main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem; color: #cdd6f4; letter-spacing: -0.02em; }
+h1 span { color: #cba6f7; }
+h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; color: #cdd6f4; }
+h2:first-of-type { margin-top: 0; }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #cba6f7; }
+h3 code { font-size: 0.95em; }
+p { color: #a6adc8; margin-bottom: 1rem; line-height: 1.7; }
+a { color: #cba6f7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { background: #313244; padding: 0.15em 0.4em; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.88em; }
+pre { background: #11111b; border: 1px solid #313244; border-radius: 10px; padding: 1.2rem; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.85rem; line-height: 1.55; color: #cdd6f4; margin: 1.2rem 0; }
+pre .c { color: #585b70; }
+pre .g { color: #a6e3a1; }
+pre .p { color: #cba6f7; }
+pre .r { color: #f38ba8; }
+pre .y { color: #fab387; }
+pre .b { color: #89b4fa; }
+.cmd-card { background: #181825; border: 1px solid #313244; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+.cmd-card h3 { margin-top: 0; }
+.cmd-card .synopsis { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.9rem; color: #a6e3a1; background: #11111b; border: 1px solid #313244; border-radius: 6px; padding: 0.8rem 1rem; margin: 0.8rem 0; }
+.cmd-card .flags { margin: 0.8rem 0; }
+.cmd-card .flags dt { color: #cba6f7; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.88rem; margin-top: 0.5rem; }
+.cmd-card .flags dd { color: #a6adc8; font-size: 0.9rem; margin-left: 1rem; }
+.cmd-card .example { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.83rem; color: #cdd6f4; background: #11111b; border: 1px solid #313244; border-radius: 6px; padding: 0.8rem 1rem; margin: 0.8rem 0; white-space: pre; }
+.env-box { background: #181825; border: 1px solid #313244; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+.env-box h3 { margin-top: 0; }
+.env-box table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; }
+.env-box th, .env-box td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid #313244; font-size: 0.9rem; }
+.env-box th { color: #a6adc8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.78rem; }
+.env-box td { color: #cdd6f4; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.85rem; }
+footer { border-top: 1px solid #313244; text-align: center; padding: 1.5rem; color: #585b70; font-size: 0.85rem; margin-top: 3rem; }
+footer a { color: #585b70; text-decoration: none; }
+footer a:hover { color: #a6adc8; }
+@media (max-width: 640px) { h1 { font-size: 1.5rem; } nav { flex-direction: column; align-items: stretch; } nav .links { justify-content: center; } }
+</style>
+</head>
+<body>
+<header>
+<nav>
+  <a href="index.html" class="logo">VibeThinker</a>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="why.html">Why</a>
+    <a href="api.html" class="active">API</a>
+    <a href="index.html#install">Install</a>
+  </div>
+</nav>
+</header>
+<main>
+<h1>CLI &amp; API <span>Reference</span></h1>
+
+<p>VibeThinker provides 8 CLI commands plus an OpenAI-compatible HTTP API. All commands connect to the server at <code>$VIBE_API</code> (default: <code>http://192.168.8.136:8002</code>).</p>
+
+<h2>CLI Commands</h2>
+
+<div class="cmd-card">
+  <h3><code>vibe prompt</code></h3>
+  <p>Send a single prompt and get a response. The primary command for one-shot queries.</p>
+  <div class="synopsis">vibe prompt &lt;text&gt; [-t temp] [-m max_tokens] [-s] [--no-think] [-o file]</div>
+  <dl class="flags">
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.5)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 512)</dd>
+    <dt>-s, --silent</dt><dd>Suppress progress output; print only the response</dd>
+    <dt>--no-think</dt><dd>Strip the &lt;think&gt; reasoning block from output</dd>
+    <dt>-o, --output &lt;file&gt;</dt><dd>Write response to file instead of stdout</dd>
+  </dl>
+  <div class="example"><span class="c"># Explain a git command</span>
+$ vibe prompt "explain what git rebase -i HEAD~3 does" --no-think
+<span class="g">Interactive rebase lets you edit, squash, reorder, or drop
+the last 3 commits before they are applied on top of HEAD.</span></div>
+</div>
+
+<div class="cmd-card">
+  <h3><code>vibe chat</code></h3>
+  <p>Multi-turn chat. Maintains conversation history for the session.</p>
+  <div class="synopsis">vibe chat &lt;text&gt; [-S system] [-t temp] [-m max_tokens] [-s] [--no-think]</div>
+  <dl class="flags">
+    <dt>-S, --system &lt;text&gt;</dt><dd>System message for the conversation</dd>
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.5)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 512)</dd>
+    <dt>-s, --silent</dt><dd>Suppress progress output</dd>
+    <dt>--no-think</dt><dd>Strip the reasoning block from output</dd>
+  </dl>
+  <div class="example"><span class="c"># Start a chat session</span>
+$ vibe chat "why is my docker container exiting immediately?" \
+    -S "you are a docker expert" --no-think
+<span class="g">Common causes: the ENTRYPOINT/CMD process exits, no
+foreground process is running, or there's an error in
+your entrypoint script. Run `docker logs &lt;container&gt;` to
+see the exit reason.</span></div>
+</div>
+
+<div class="cmd-card">
+  <h3><code>vibe code</code></h3>
+  <p>Generate code for a given task. Optimized for code output.</p>
+  <div class="synopsis">vibe code &lt;task&gt; [-t temp] [-m max_tokens] [-s] [-o file]</div>
+  <dl class="flags">
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.3 — lower for code)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 1024)</dd>
+    <dt>-s, --silent</dt><dd>Suppress progress output</dd>
+    <dt>-o, --output &lt;file&gt;</dt><dd>Write generated code to file</dd>
+  </dl>
+  <div class="example"><span class="c"># Generate a Rust Fibonacci function and save it</span>
+$ vibe code "write a fibonacci function in rust with memoization" -o fib.rs</div>
+</div>
+
+<div class="cmd-card">
+  <h3><code>vibe think</code></h3>
+  <p>Show only the model's reasoning chain. Strips the answer, keeps the &lt;think&gt; block.</p>
+  <div class="synopsis">vibe think &lt;text&gt; [-t temp] [-m max_tokens] [--json]</div>
+  <dl class="flags">
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.5)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 1024)</dd>
+    <dt>--json</dt><dd>Output reasoning as JSON</dd>
+  </dl>
+  <div class="example"><span class="c"># See how the model reasons about sorting algorithm choice</span>
+$ vibe think "which sorting algorithm should I use for a nearly-sorted array of 1M integers?"
+<span class="g">&lt;think&gt;The user has a nearly-sorted array of 1 million
+integers. Insertion sort is O(n) on nearly-sorted data
+but O(n^2) average case. Timsort is O(n) on nearly-sorted
+and O(n log n) worst case — it's the clear choice here.
+Python uses Timsort natively in list.sort().&lt;/think&gt;</span></div>
+</div>
+
+<div class="cmd-card">
+  <h3><code>vibe explain</code></h3>
+  <p>Explain a file or code snippet. Reads the file and sends it to the model for explanation.</p>
+  <div class="synopsis">vibe explain &lt;file&gt; [-t temp] [-m max_tokens] [-s] [-o file]</div>
+  <dl class="flags">
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.5)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 1024)</dd>
+    <dt>-s, --silent</dt><dd>Suppress progress output</dd>
+    <dt>-o, --output &lt;file&gt;</dt><dd>Write explanation to file</dd>
+  </dl>
+  <div class="example"><span class="c"># Explain a Python file</span>
+$ vibe explain src/main.py --no-think
+<span class="g">This file implements a FastAPI server with two endpoints.
+/v1/chat/completions accepts POST requests with OpenAI-
+compatible payloads and delegates to a subprocess worker.</span></div>
+</div>
+
+<div class="cmd-card">
+  <h3><code>vibe sh</code></h3>
+  <p>Generate a shell command for a task. Output is a single command ready to run.</p>
+  <div class="synopsis">vibe sh &lt;task&gt; [-t temp] [-m max_tokens]</div>
+  <dl class="flags">
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.3 — lower for commands)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 256)</dd>
+  </dl>
+  <div class="example"><span class="c"># Generate a shell command</span>
+$ vibe sh "find all pdfs in /tmp modified in the last 24 hours"
+<span class="g">find /tmp -name '*.pdf' -mtime -1</span></div>
+</div>
+
+<div class="cmd-card">
+  <h3><code>vibe review</code></h3>
+  <p>Review a file for bugs, style issues, and improvements.</p>
+  <div class="synopsis">vibe review &lt;file&gt; [-t temp] [-m max_tokens]</div>
+  <dl class="flags">
+    <dt>-t, --temp &lt;float&gt;</dt><dd>Temperature (default: 0.5)</dd>
+    <dt>-m, --max-tokens &lt;int&gt;</dt><dd>Maximum output tokens (default: 1024)</dd>
+  </dl>
+  <div class="example"><span class="c"># Review a Python file</span>
+$ vibe review src/vibecli.py
+<span class="g">1. Missing error handling in `chat()` when server is down
+2. Hardcoded timeout of 30s — should be configurable
+3. Line 142: variable `responce` is a typo of `response`</span></div>
+</div>
+
+<div class="cmd-card" id="eval">
+  <h3><code>vibe eval</code></h3>
+  <p>Run the eval suite against the model. Measures pass rate across 27 tasks.</p>
+  <div class="synopsis">vibe eval [suite] [-n trials] [-v] [--report]</div>
+  <dl class="flags">
+    <dt>suite</dt><dd>Specific suite to run (default: all suites)</dd>
+    <dt>-n, --trials &lt;int&gt;</dt><dd>Number of trials per task (default: 1)</dd>
+    <dt>-v, --verbose</dt><dd>Show per-task results as they run</dd>
+    <dt>--report</dt><dd>Generate an HTML report</dd>
+  </dl>
+  <div class="example"><span class="c"># Run the full eval suite</span>
+$ vibe eval --report -v
+<span class="g">[code/python_fib]    PASS  (0.34s)
+[code/rust_fib]      PASS  (0.41s)
+[sh/find_pdfs]       PASS  (0.22s)
+[sh/git_log]         FAIL  (0.31s)
+...
+27/28 passed (96.4%)
+Report written to eval_report.html</span></div>
+</div>
+
+<h2>HTTP API</h2>
+
+<p>The server exposes an OpenAI-compatible API. Any OpenAI client can use VibeThinker by changing the base URL.</p>
+
+<h3><code>POST /v1/chat/completions</code></h3>
+<p>Generate a completion from a chat-formatted prompt. Fully compatible with the OpenAI Chat Completions schema.</p>
+
+<pre>POST http://localhost:8002/v1/chat/completions
+Content-Type: application/json
+
+{
+  <span class="g">"model"</span>: <span class="y">"vibethinker"</span>,
+  <span class="g">"messages"</span>: [
+    { <span class="g">"role"</span>: <span class="y">"user"</span>, <span class="g">"content"</span>: <span class="y">"explain git rebase"</span> }
+  ],
+  <span class="g">"temperature"</span>: <span class="b">0.5</span>,
+  <span class="g">"max_tokens"</span>: <span class="b">512</span>,
+  <span class="g">"stream"</span>: <span class="r">false</span>
+}</pre>
+
+<p>Response:</p>
+<pre>{
+  <span class="g">"id"</span>: <span class="y">"cmpl-abc123"</span>,
+  <span class="g">"object"</span>: <span class="y">"chat.completion"</span>,
+  <span class="g">"created"</span>: <span class="b">1712345678</span>,
+  <span class="g">"model"</span>: <span class="y">"vibethinker"</span>,
+  <span class="g">"choices"</span>: [{
+    <span class="g">"index"</span>: <span class="b">0</span>,
+    <span class="g">"message"</span>: {
+      <span class="g">"role"</span>: <span class="y">"assistant"</span>,
+      <span class="g">"content"</span>: <span class="y">"&lt;think&gt;explanation&lt;/think&gt;answer"</span>
+    },
+    <span class="g">"finish_reason"</span>: <span class="y">"stop"</span>
+  }],
+  <span class="g">"usage"</span>: {
+    <span class="g">"prompt_tokens"</span>: <span class="b">12</span>,
+    <span class="g">"completion_tokens"</span>: <span class="b">142</span>,
+    <span class="g">"total_tokens"</span>: <span class="b">154</span>
+  }
+}</pre>
+
+<h3><code>GET /v1/models</code></h3>
+<p>List available models. Used by the CLI for health checking and by OpenAI clients to verify connectivity.</p>
+
+<pre>GET http://localhost:8002/v1/models
+
+{
+  <span class="g">"object"</span>: <span class="y">"list"</span>,
+  <span class="g">"data"</span>: [
+    {
+      <span class="g">"id"</span>: <span class="y">"vibethinker"</span>,
+      <span class="g">"object"</span>: <span class="y">"model"</span>,
+      <span class="g">"created"</span>: <span class="b">1712345678</span>,
+      <span class="g">"owned_by"</span>: <span class="y">"vibethinker"</span>
+    }
+  ]
+}</pre>
+
+<h2>Environment Variables</h2>
+<div class="env-box">
+  <table>
+    <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+    <tr><td>VIBE_API</td><td>http://192.168.8.136:8002</td><td>Base URL for the VibeThinker server</td></tr>
+  </table>
+  <p style="margin-top:0.8rem;margin-bottom:0;">Set <code>VIBE_API</code> to change the server address, e.g. <code>export VIBE_API=http://localhost:8002</code> for a local instance.</p>
+</div>
+</main>
+<footer>Keep documentation in sync &mdash; <a href="https://github.com/your-org/vibethinker">VibeThinker</a></footer>
+</body>
+</html>

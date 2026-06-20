@@ -1,0 +1,16 @@
+[Unit]
+Description=VibeThinker 3B AI server
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/root/watchdog.sh
+ExecStop=/bin/sh -c 'kill $(lsof -ti :8002) 2>/dev/null || true'
+Restart=on-failure
+RestartSec=10
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
