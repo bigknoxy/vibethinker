@@ -15,7 +15,7 @@ app = FastAPI()
 print(f"Loading {MODEL_NAME} from {MODEL_PATH}...")
 llm = Llama(
     model_path=MODEL_PATH,
-    n_ctx=2048,
+    n_ctx=4096,
     n_threads=2,
     n_batch=8,
     use_mmap=True,

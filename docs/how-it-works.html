@@ -67,13 +67,13 @@ footer a:hover { color: #a6adc8; }
   <div class="spec"><div class="val">Q8_0</div><div class="lbl">Quantization</div></div>
   <div class="spec"><div class="val">3.1 GB</div><div class="lbl">File Size</div></div>
   <div class="spec"><div class="val">~3.3 GB</div><div class="lbl">RAM Usage</div></div>
-  <div class="spec"><div class="val">2048</div><div class="lbl">Context (n_ctx)</div></div>
+   <div class="spec"><div class="val">4096</div><div class="lbl">Context (n_ctx)</div></div>
   <div class="spec"><div class="val">2</div><div class="lbl">Threads (n_threads)</div></div>
   <div class="spec"><div class="val">Qwen2</div><div class="lbl">Architecture</div></div>
   <div class="spec"><div class="val">CPU</div><div class="lbl">Backend</div></div>
 </div>
 
-<p>The worker loads the GGUF file using <code>llama-cpp-python</code>'s <code>Llama</code> class with <code>n_ctx=2048</code> and <code>n_threads=2</code>. On an i5-6500T (2 cores, 4 threads) this uses approximately 3.3 GB of resident memory. The model stays loaded only for the duration of a single request; the worker process exits after generating the response.</p>
+<p>The worker loads the GGUF file using <code>llama-cpp-python</code>'s <code>Llama</code> class with <code>n_ctx=4096</code> and <code>n_threads=2</code>. On an i5-6500T (2 cores, 4 threads) this uses approximately 3.3 GB of resident memory. The model stays loaded only for the duration of a single request; the worker process exits after generating the response.</p>
 
 <h2>Inference</h2>
 
