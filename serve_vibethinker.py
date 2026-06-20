@@ -62,16 +62,20 @@ def chat_completions(req: ChatRequest):
             chunk_id = f"chatcmpl-{uuid.uuid4().hex}"
             ts = int(time.time())
 
-            yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {'role': 'assistant'}, 'finish_reason': None}]})}\n\n"
+            try:
+                yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {'role': 'assistant'}, 'finish_reason': None}]})}\n\n"
 
-            for chunk in gen:
-                delta = chunk["choices"][0]["delta"]
-                if "content" in delta:
-                    yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {'content': delta['content']}, 'finish_reason': None}]})}\n\n"
-                await asyncio.sleep(0)
+                for chunk in gen:
+                    delta = chunk["choices"][0]["delta"]
+                    if "content" in delta:
+                        yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {'content': delta['content']}, 'finish_reason': None}]})}\n\n"
+                    await asyncio.sleep(0)
 
-            yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {}, 'finish_reason': 'stop'}]})}\n\n"
-            yield "data: [DONE]\n\n"
+                yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {}, 'finish_reason': 'stop'}]})}\n\n"
+            except Exception as e:
+                yield f"data: {json.dumps({'id': chunk_id, 'object': 'chat.completion.chunk', 'created': ts, 'model': req.model, 'choices': [{'index': 0, 'delta': {'content': f'[stream error: {e}]'}, 'finish_reason': 'error'}]})}\n\n"
+            finally:
+                yield "data: [DONE]\n\n"
 
         return StreamingResponse(stream_gen(), media_type="text/event-stream")
     else:

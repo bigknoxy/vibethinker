@@ -54,14 +54,17 @@ def chat(messages: list, temperature=1.0, top_p=0.95, max_tokens=2048, stream=Fa
             time.sleep(backoff[attempt])
         else:
             if stream:
-                for line in resp.iter_lines():
-                    if not line or line.startswith(b":") or line == b"data: [DONE]":
-                        continue
-                    if line.startswith(b"data: "):
-                        chunk = json.loads(line[6:])
-                        delta = chunk["choices"][0]["delta"]
-                        if "content" in delta:
-                            yield delta["content"]
+                try:
+                    for line in resp.iter_lines():
+                        if not line or line.startswith(b":") or line == b"data: [DONE]":
+                            continue
+                        if line.startswith(b"data: "):
+                            chunk = json.loads(line[6:])
+                            delta = chunk["choices"][0]["delta"]
+                            if "content" in delta:
+                                yield delta["content"]
+                except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
+                    yield f"[stream interrupted: {e}]"
             else:
                 data = resp.json()
                 yield data["choices"][0]["message"]["content"]
