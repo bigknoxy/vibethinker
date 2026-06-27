@@ -6,7 +6,7 @@ Wants=network.target
 [Service]
 Type=simple
 ExecStart=/root/watchdog.sh
-ExecStop=/bin/sh -c 'kill $(lsof -ti :8002) 2>/dev/null || true'
+ExecStop=/bin/sh -c 'kill $(lsof -ti :8003) 2>/dev/null || true'
 Restart=on-failure
 RestartSec=10
 User=root

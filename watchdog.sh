@@ -1,9 +1,9 @@
 #!/bin/bash
 
 LOGFILE="/root/watchdog.log"
-SERVER_CMD="python3 /root/serve_vibethinker.py"
+SERVER_CMD="python3 /root/code/vibethinker/serve_vibethinker.py"
 SERVER_LOG="/root/vibethinker_server.log"
-HEALTH_URL="http://localhost:8002/v1/models"
+HEALTH_URL="http://localhost:8003/v1/models"
 PIDFILE="/tmp/vibethinker_watchdog.pid"
 CHECK_INTERVAL=10
 MAX_FAILURES=3

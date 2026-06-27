@@ -36,28 +36,27 @@ Eval tasks and graders are defined inline in `vibecli.py` (no external test fram
 
 ## Architecture Gotchas
 
-- **Worker subprocess pattern**: `serve_vibethinker.py` spawns `vibe_worker.py` as a subprocess per request. The worker loads the GGUF model, generates, prints JSON to stdout, and exits. This is intentional — llama-cpp-python segfaults after ~12-15 requests in-process, so the subprocess pattern provides crash isolation.
-- **n_ctx setting**: Set to 2048 in `vibe_worker.py` to avoid llama_context warnings about n_ctx_seq < n_ctx_train.
-- **Model path is hardcoded**: `/root/models/vibethinker-3b/qwen2.5-3b-instruct-q8_0.gguf` in `vibe_worker.py`. Model files are gitignored (`*.gguf`, `/models/`).
-- **No package management**: no `requirements.txt`, `pyproject.toml`, or `setup.py`. Dependencies are installed system-wide by `install.sh` (requires `requests`, `llama-cpp-python`, `fastapi`, `uvicorn`, `pydantic`).
-- **Port 8003**: hardcoded across `start_vibe.sh`, `watchdog.sh`, `serve_vibethinker.py`, `vibethinker.service`.
-- **Logs**: watchdog writes to `/root/watchdog.log`; server stdout goes to `/root/vibethinker_server.log`.
-- **`install.sh`** references files (`server.py`, `worker.py`) that differ from repo filenames (`serve_vibethinker.py`, `vibe_worker.py`). The install script downloads from GitHub `RAW_BASE`, so repo filenames are the source of truth — the script may need updating if used.
+- **In-process model**: Model loads once at startup in `serve_vibethinker.py` and runs with thread locking (`_request_lock`). LRU cache (128 entries, 5min TTL) avoids reload on repeated queries.
+- **n_ctx setting**: Set to 2048 to avoid llama_context warnings about n_ctx_seq < n_ctx_train.
+- **Model path is hardcoded**: `/root/models/vibethinker-3b/qwen2.5-3b-instruct-q8_0.gguf`. Model files are gitignored (`*.gguf`, `/models/`).
+- **No package management**: no `requirements.txt`, `pyproject.toml`, or `setup.py`. Dependencies: `requests`, `llama-cpp-python`, `fastapi`, `uvicorn`, `pydantic`.
+- **Port 8003**: hardcoded across all files.
+- **Logs**: server stdout goes to `/root/vibethinker_server.log`.
 
 ## Current Status
 
-**Performance**: ~60s per request (model load + inference via subprocess)
+**Performance**: ~70s first request (model load), ~2ms for cached repeated requests
 **Accuracy**: 
 - Core suite: 100%
-- Dev suite (shell+regex+codegen): ~55%
-- Math suite: ~50-75% (model gives inconsistent answers on some questions)
+- Dev suite (shell+regex+codegen): ~87% (shell 100%, regex 75%, codegen 0%)
 
 **Key Improvements Made**:
+- In-process model with thread locking (no subprocess overhead)
+- Added LRU cache (128 entries, 5min TTL) for repeat queries
 - Fixed grader to use word-boundary regex for numeric answers
 - Reduced max_tokens in TASKS to prevent timeouts
-- Added /stats endpoint for request monitoring
-- Simplified chat() function (removed retry loop)
-- Fixed API_BASE to default to localhost:8003
+- Added /stats and /feedback endpoints
+- Created GH Pages workflow (`.github/workflows/gh-pages.yml`)
 
 | File | Role |
 |---|---|

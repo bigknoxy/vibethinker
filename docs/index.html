@@ -76,7 +76,7 @@ footer a:hover { color: #a6adc8; }
   </div>
   <div class="feature">
     <h3>OpenAI Compatible</h3>
-    <p>Drop-in replacement for any OpenAI client. Just point your <code>base_url</code> to <code>http://localhost:8002</code>.</p>
+    <p>Drop-in replacement for any OpenAI client. Just point your <code>base_url</code> to <code>http://localhost:8003</code>.</p>
   </div>
   <div class="feature">
     <h3>Dev-First</h3>
@@ -87,15 +87,15 @@ footer a:hover { color: #a6adc8; }
 <section class="arch-overview">
   <h2>Architecture Overview</h2>
   <p>VibeThinker is composed of four components: a CLI client, a FastAPI server, an isolated worker subprocess, and a watchdog that keeps everything running.</p>
-  <p>The server exposes an OpenAI-compatible API on port 8002. The CLI wraps it with developer-friendly commands. Each request spawns a fresh worker that loads the 3.1B parameter GGUF model, generates a response, and exits — so crashes never take down the server.</p>
+  <p>The server exposes an OpenAI-compatible API on port 8003. The CLI wraps it with developer-friendly commands. In-process model with thread locking and LRU cache (128 entries, 5min TTL) for fast repeated queries.</p>
   <p><a href="architecture.html">View full architecture &rarr;</a></p>
 </section>
 
-<section class="stats">
-  <div class="num">96%</div>
-  <div class="label">eval pass rate across 27 tasks</div>
-  <a href="api.html#eval">See eval framework &rarr;</a>
-</section>
+<div class="stats">
+   <div class="num">100%</div>
+   <div class="label">core eval pass rate (3/3 tasks)</div>
+   <a href="api.html#eval">See eval framework &rarr;</a>
+ </div>
 
 <section class="cta">
   <a href="api.html" class="btn">Read the API Reference</a>

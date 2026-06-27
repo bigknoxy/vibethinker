@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LOGFILE="/root/watchdog.log"
-HEALTH_URL="http://localhost:8002/v1/models"
+HEALTH_URL="http://localhost:8003/v1/models"
 PIDFILE="/tmp/vibethinker_watchdog.pid"
 
 log() {
@@ -10,10 +10,10 @@ log() {
 
 log "=== Starting vibe server ==="
 
-# Kill anything on port 8002
-PID_ON_PORT=$(lsof -ti :8002 2>/dev/null)
+# Kill anything on port 8003
+PID_ON_PORT=$(lsof -ti :8003 2>/dev/null)
 if [ -n "$PID_ON_PORT" ]; then
-    log "Killing existing process(es) on port 8002: $PID_ON_PORT"
+    log "Killing existing process(es) on port 8003: $PID_ON_PORT"
     kill -9 $PID_ON_PORT 2>/dev/null
     sleep 1
 fi

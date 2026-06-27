@@ -69,9 +69,9 @@ footer a:hover { color: #a6adc8; }
 <div class="diagram">┌──────────────────────────────────────────────────────────┐
 │                        ┌──────────────┐                   │
 │  ┌──────────┐          │   FastAPI    │   ┌────────────┐  │
-│  │   CLI    │ ────────&gt; │   Server     │──&gt;│  Worker    │  │
-│  │ vibecli  │  HTTP     │ port 8002   │    │ subprocess │  │
-│  │ .py      │  POST     │ /v1/chat/   │    │ .py       │  │
+│  │   CLI    │ ────────&gt; │   Server     │──&gt;│  LLM        │  │
+│  │ vibecli  │  HTTP     │ port 8003   │    │ (thread-   │  │
+│  │ .py      │  POST     │ /v1/chat/   │    │ locked)   │  │
 │  └──────────┘          │ completions │    └─────┬──────┘  │
 │        │               └──────────────┘          │         │
 │        │                                          │         │
@@ -105,7 +105,7 @@ footer a:hover { color: #a6adc8; }
   <li>
     <strong>Server</strong>
     <span class="file">serve_vibethinker.py</span>
-    <p>FastAPI server running on port <code>8002</code>. Exposes <code>POST /v1/chat/completions</code> (OpenAI-compatible) and <code>GET /v1/models</code>. Spawns a worker subprocess per request for crash isolation.</p>
+    <p>FastAPI server running on port <code>8003</code>. Exposes <code>POST /v1/chat/completions</code> (OpenAI-compatible), <code>GET /stats</code> (request metrics), and <code>GET /v1/models</code>. Model runs in-process with thread locking for safety. LRU cache (128 entries, 5min TTL) avoids model reload on repeated prompts.</p>
   </li>
   <li>
     <strong>Worker</strong>
@@ -133,10 +133,9 @@ footer a:hover { color: #a6adc8; }
 <div class="flow">vibe prompt "list all pdfs in /tmp"           <span style="color:#585b70;"># CLI command</span>
   → chat()                                      <span style="color:#585b70;"># builds OpenAI-style payload</span>
   → POST /v1/chat/completions                   <span style="color:#585b70;"># HTTP to FastAPI</span>
-  → serve_vibethinker.py                        <span style="color:#585b70;"># parses request, spawns worker</span>
-  → vibe_worker.py                              <span style="color:#585b70;"># loads GGUF into memory</span>
-  → llama-cpp-python Python API                 <span style="color:#585b70;"># CPU inference</span>
-  → Qwen2-3.1B-Q8_0 GGUF model                  <span style="color:#585b70;"># generates response</span>
+  → serve_vibethinker.py                        <span style="color:#585b70;"># checks LRU cache, then model inference</span>
+  → LLM (thread-locked)                          <span style="color:#585b70;"># in-process model</span>
+  → Qwen2-3.1B-Q8_0 GGUF model                  <span style="color:#585b70;"># CPU inference</span>
   → &lt;think&gt;reasoning&lt;/think&gt;answer               <span style="color:#585b70;"># structured output</span>
   → response JSON ⟶ CLI stdout                  <span style="color:#585b70;"># printed to terminal</span></div>
 

@@ -67,7 +67,7 @@ footer a:hover { color: #a6adc8; }
 <main>
 <h1>CLI &amp; API <span>Reference</span></h1>
 
-<p>VibeThinker provides 8 CLI commands plus an OpenAI-compatible HTTP API. All commands connect to the server at <code>$VIBE_API</code> (default: <code>http://192.168.8.136:8002</code>).</p>
+<p>VibeThinker provides 8 CLI commands plus an OpenAI-compatible HTTP API. All commands connect to the server at <code>$VIBE_API</code> (default: <code>http://localhost:8003</code>).</p>
 
 <h2>CLI Commands</h2>
 
@@ -213,7 +213,7 @@ Report written to eval_report.html</span></div>
 <h3><code>POST /v1/chat/completions</code></h3>
 <p>Generate a completion from a chat-formatted prompt. Fully compatible with the OpenAI Chat Completions schema.</p>
 
-<pre>POST http://localhost:8002/v1/chat/completions
+<pre>POST http://localhost:8003/v1/chat/completions
 Content-Type: application/json
 
 {
@@ -250,27 +250,52 @@ Content-Type: application/json
 <h3><code>GET /v1/models</code></h3>
 <p>List available models. Used by the CLI for health checking and by OpenAI clients to verify connectivity.</p>
 
-<pre>GET http://localhost:8002/v1/models
+<pre>GET http://localhost:8003/v1/models
 
 {
   <span class="g">"object"</span>: <span class="y">"list"</span>,
   <span class="g">"data"</span>: [
     {
-      <span class="g">"id"</span>: <span class="y">"vibethinker"</span>,
-      <span class="g">"object"</span>: <span class="y">"model"</span>,
-      <span class="g">"created"</span>: <span class="b">1712345678</span>,
-      <span class="g">"owned_by"</span>: <span class="y">"vibethinker"</span>
+      <span class="g">"id"</span>: <span class="y">"VibeThinker"</span>,
+      <span class="g">"object"</span>: <span class="y">"model"</span>
     }
   ]
 }</pre>
 
+<h3><code>GET /stats</code></h3>
+<p>Request statistics: total requests, errors, cache hits/misses, and cache size.</p>
+
+<pre>GET http://localhost:8003/stats
+
+{
+  <span class="g">"requests"</span>: <span class="b">42</span>,
+  <span class="g">"errors"</span>: <span class="b">0</span>,
+  <span class="g">"total_time"</span>: <span class="b">580.2</span>,
+  <span class="g">"cache_hits"</span>: <span class="b">18</span>,
+  <span class="g">"cache_misses"</span>: <span class="b">12</span>,
+  <span class="g">"cache_size"</span>: <span class="b">9</span>
+}</pre>
+
+<h3><code>POST /feedback</code></h3>
+<p>Submit feedback for self-improvement data collection.</p>
+
+<pre>POST http://localhost:8003/feedback
+Content-Type: application/json
+
+{
+  <span class="g">"rating"</span>: <span class="b">5</span>,
+  <span class="g">"comment"</span>: <span class="y">"helped with my regex"</span>
+}
+
+<span class="g">Response:</span> <span class="y">{"status": "recorded"}</span>
+
 <h2>Environment Variables</h2>
 <div class="env-box">
-  <table>
-    <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
-    <tr><td>VIBE_API</td><td>http://192.168.8.136:8002</td><td>Base URL for the VibeThinker server</td></tr>
-  </table>
-  <p style="margin-top:0.8rem;margin-bottom:0;">Set <code>VIBE_API</code> to change the server address, e.g. <code>export VIBE_API=http://localhost:8002</code> for a local instance.</p>
+<table>
+     <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+     <tr><td>VIBE_API</td><td>http://localhost:8003</td><td>Base URL for the VibeThinker server</td></tr>
+   </table>
+   <p style="margin-top:0.8rem;margin-bottom:0;">Set <code>VIBE_API</code> to change the server address, e.g. <code>export VIBE_API=http://localhost:8003</code> for a local instance.</p>
 </div>
 </main>
 <footer>Keep documentation in sync &mdash; <a href="https://github.com/your-org/vibethinker">VibeThinker</a></footer>
