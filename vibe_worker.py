@@ -3,13 +3,13 @@
 import json, os, sys, time
 from llama_cpp import Llama
 
-MODEL_PATH = "/root/models/vibethinker-3b/ggml-model-q8_0.gguf"
+MODEL_PATH = "/root/models/vibethinker-3b/qwen2.5-3b-instruct-q8_0.gguf"
 
 req = json.loads(sys.stdin.read())
 
 llm = Llama(
     model_path=MODEL_PATH,
-    n_ctx=req.get("n_ctx", 4096),
+    n_ctx=2048,
     n_threads=2,
     n_batch=8,
     use_mmap=True,

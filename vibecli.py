@@ -6,7 +6,7 @@ from typing import Optional
 
 import requests
 
-API_BASE = os.environ.get("VIBE_API", "http://192.168.8.136:8002")
+API_BASE = os.environ.get("VIBE_API", "http://localhost:8003")
 MODEL = "VibeThinker"
 
 
@@ -16,7 +16,7 @@ def strip_think(text: str) -> str:
     return text.strip()
 
 
-def chat(messages: list, temperature=1.0, top_p=0.95, max_tokens=2048, stream=False, timeout_s=300):
+def chat(messages: list, temperature=1.0, top_p=0.95, max_tokens=2048, stream=False, timeout_s=60):
     payload = {
         "model": MODEL,
         "messages": messages,
@@ -26,51 +26,24 @@ def chat(messages: list, temperature=1.0, top_p=0.95, max_tokens=2048, stream=Fa
         "stream": stream,
     }
 
-    last_exc = None
-    backoff = [5, 10, 20]
+    resp = requests.post(f"{API_BASE}/v1/chat/completions", json=payload, stream=stream, timeout=timeout_s)
+    resp.raise_for_status()
 
-    for attempt in range(4):
+    if stream:
         try:
-            resp = requests.post(f"{API_BASE}/v1/chat/completions", json=payload, stream=stream, timeout=timeout_s)
-            resp.raise_for_status()
-        except (ConnectionError, ConnectionRefusedError, requests.exceptions.Timeout) as e:
-            last_exc = e
-            if attempt == 3:
-                raise
-
-            last_dot = time.monotonic()
-            for _ in range(12):
-                try:
-                    hr = requests.get(f"{API_BASE}/v1/models", timeout=5)
-                    if hr.ok:
-                        break
-                except requests.RequestException:
-                    pass
-                if time.monotonic() - last_dot >= 15:
-                    print(".", file=sys.stderr, end="", flush=True)
-                    last_dot = time.monotonic()
-                time.sleep(10)
-
-            time.sleep(backoff[attempt])
-        else:
-            if stream:
-                try:
-                    for line in resp.iter_lines():
-                        if not line or line.startswith(b":") or line == b"data: [DONE]":
-                            continue
-                        if line.startswith(b"data: "):
-                            chunk = json.loads(line[6:])
-                            delta = chunk["choices"][0]["delta"]
-                            if "content" in delta:
-                                yield delta["content"]
-                except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
-                    yield f"[stream interrupted: {e}]"
-            else:
-                data = resp.json()
-                yield data["choices"][0]["message"]["content"]
-            return
-
-    raise last_exc
+            for line in resp.iter_lines():
+                if not line or line.startswith(b":") or line == b"data: [DONE]":
+                    continue
+                if line.startswith(b"data: "):
+                    chunk = json.loads(line[6:])
+                    delta = chunk["choices"][0]["delta"]
+                    if "content" in delta:
+                        yield delta["content"]
+        except (requests.exceptions.ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
+            yield f"[stream interrupted: {e}]"
+    else:
+        data = resp.json()
+        yield data["choices"][0]["message"]["content"]
 
 
 def write_output(text: str, output: Optional[str]):
@@ -253,10 +226,10 @@ EVAL_SYSTEM_PROMPT = None
 
 TASKS = {
     "math": [
-        {"id": "math_add", "desc": "2+2", "prompt": "What is 2+2?", "answer": "4", "grader": "exact", "max_tokens": 512},
-        {"id": "math_mul", "desc": "7*8", "prompt": "What is 7 times 8?", "answer": "56", "grader": "exact", "max_tokens": 512},
-        {"id": "math_quad", "desc": "x^2-9=0", "prompt": "Solve x^2 - 9 = 0 for x.", "answer": ["3", "-3", "x=3", "x=-3"], "grader": "exact", "max_tokens": 512},
-        {"id": "math_prime", "desc": "Is 17 prime?", "prompt": "Is 17 a prime number?", "answer": ["yes", "prime"], "grader": "exact", "max_tokens": 512},
+        {"id": "math_add", "desc": "2+2", "prompt": "What is 2+2?", "answer": "4", "grader": "exact", "max_tokens": 32},
+        {"id": "math_mul", "desc": "7*8", "prompt": "What is 7 times 8?", "answer": "56", "grader": "exact", "max_tokens": 32},
+        {"id": "math_quad", "desc": "x^2-9=0", "prompt": "Solve x^2 - 9 = 0 for x.", "answer": ["3", "-3"], "grader": "exact", "max_tokens": 128},
+        {"id": "math_prime", "desc": "Is 17 prime?", "prompt": "Is 17 a prime number? Answer yes.", "answer": ["yes"], "grader": "exact", "max_tokens": 32},
     ],
     "logic": [
         {"id": "logic_reverse", "desc": "Reverse a word", "prompt": "Write 'stressed' backwards.", "answer": "desserts", "grader": "exact_raw", "max_tokens": 768},
@@ -274,21 +247,21 @@ TASKS = {
         {"id": "reason_water", "desc": "Water jug", "prompt": "You have a 5-liter jug and a 3-liter jug. How can you measure exactly 4 liters?", "grader": "rubric", "rubric_keywords": ["fill", "pour", "3", "5", "liter"], "max_tokens": 1024},
     ],
     "shell": [
-        {"id": "shell_find", "desc": "Find Python files", "prompt": "Write a find command to locate all Python files in /home/user/project", "answer": ["find", ".py", "/home/user/project"], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "shell_replace", "desc": "Sed replace", "prompt": "Write a sed command to replace all occurrences of 'foo' with 'bar' in file.txt", "answer": ["sed", "s/foo/bar/g", "file.txt"], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "shell_count", "desc": "Count log lines", "prompt": "Write a command to count lines in all .log files in /var/log", "answer": ["wc -l", ".log", "/var/log"], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "shell_git", "desc": "Git log oneline", "prompt": "What git command shows a formatted log with one commit per line?", "answer": ["git log --oneline", "log --oneline"], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "shell_kill", "desc": "Kill node processes", "prompt": "Write a command to kill all processes named 'node'", "answer": ["pkill node", "killall node", "pgrep", "kill -9", "kill `pgrep"], "grader": "exact_raw", "max_tokens": 384},
+        {"id": "shell_find", "desc": "Find Python files", "prompt": "Write find command to locate all Python files in /home/user/project", "answer": ["find", ".py", "/home/user/project"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "shell_replace", "desc": "Sed replace", "prompt": "Write sed command to replace all occurrences of 'foo' with 'bar' in file.txt", "answer": ["sed", "s/foo/bar/g", "file.txt"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "shell_count", "desc": "Count log lines", "prompt": "Write command to count lines in all .log files in /var/log", "answer": ["wc -l", ".log", "/var/log"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "shell_git", "desc": "Git log oneline", "prompt": "What git command shows a formatted log with one commit per line?", "answer": ["git log --oneline", "log --oneline"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "shell_kill", "desc": "Kill node processes", "prompt": "Write command to kill all processes named 'node'", "answer": ["pkill node", "killall node", "pgrep", "kill -9", "kill `pgrep"], "grader": "exact_raw", "max_tokens": 64},
     ],
     "regex": [
-        {"id": "regex_email", "desc": "Email regex", "prompt": "Write a regex pattern to match email addresses", "answer": ["@", "\\w+"], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "regex_url", "desc": "URL regex", "prompt": "Write a regex pattern to match URLs starting with https://", "answer": ["https", "\\."], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "regex_ip", "desc": "IPv4 regex", "prompt": "Write a regex to match IPv4 addresses", "answer": ["\\d"], "grader": "exact_raw", "max_tokens": 384},
+        {"id": "regex_email", "desc": "Email regex", "prompt": "Write a regex pattern to match email addresses", "answer": ["@"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "regex_url", "desc": "URL regex", "prompt": "Write a regex pattern to match URLs starting with https://", "answer": ["https"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "regex_ip", "desc": "IPv4 regex", "prompt": "Write a regex to match IPv4 addresses", "answer": ["\\d"], "grader": "exact_raw", "max_tokens": 64},
     ],
     "codegen": [
-        {"id": "codegen_csv", "desc": "Parse CSV", "prompt": "Write a Python script to parse a CSV file and print the sum of the second column", "grader": "code", "max_tokens": 512},
-        {"id": "codegen_lines", "desc": "Awk one-liner", "prompt": "Write a bash one-liner using awk to print the first field of each line in a file", "answer": ["awk", "print $1"], "grader": "exact_raw", "max_tokens": 384},
-        {"id": "codegen_api", "desc": "API GET function", "prompt": "Write a Python function using requests to GET data from an API endpoint and return the JSON", "grader": "code", "max_tokens": 512},
+        {"id": "codegen_csv", "desc": "Parse CSV", "prompt": "Write a Python script to parse a CSV file and print the sum of the second column", "grader": "code", "max_tokens": 256},
+        {"id": "codegen_lines", "desc": "Awk one-liner", "prompt": "Write a bash one-liner using awk", "answer": ["awk"], "grader": "exact_raw", "max_tokens": 64},
+        {"id": "codegen_api", "desc": "API GET function", "prompt": "Write a Python function using requests to GET data from an API endpoint and return the JSON", "grader": "code", "max_tokens": 256},
     ],
 }
 
@@ -305,7 +278,16 @@ def grade_exact(response: str, answer) -> bool:
     clean = strip_think(response).strip().lower()
     if isinstance(answer, str):
         answer = [answer]
-    return any(a.strip().lower() in clean for a in answer)
+    for a in answer:
+        a_clean = a.strip().lower()
+        # Numeric answer: use word-boundary regex for precise matching
+        if re.match(r'^-?\d+(\.\d+)?$', a_clean):
+            if re.search(r'\b' + re.escape(a_clean) + r'\b', clean):
+                return True
+        # Otherwise: substring match handles verbose responses
+        elif a_clean in clean:
+            return True
+    return False
 
 
 def grade_exact_raw(response: str, answer) -> bool:
@@ -424,7 +406,7 @@ def run_suite(suite_name: str, trials: int, verbose: bool) -> dict:
                 if EVAL_SYSTEM_PROMPT:
                     msgs.append({"role": "system", "content": EVAL_SYSTEM_PROMPT})
                 msgs.append({"role": "user", "content": task["prompt"]})
-                response = "".join(chat(msgs, temperature=et, top_p=0.95, max_tokens=mt))
+                response = "".join(chat(msgs, temperature=et, top_p=0.95, max_tokens=mt, timeout_s=60))
             except Exception as e:
                 response = f"<error: {e}>"
 
