@@ -103,17 +103,17 @@ footer a:hover { color: #8b949e; }
   <a href="api.html" class="btn">Read the API Reference</a>
 </section>
 
-<section id="install" style="margin:3rem 0;">
-  <h2 style="font-size:1.4rem;margin-bottom:1rem;color:#cdd6f4;">Installation</h2>
-  <div style="background:#181825;border:1px solid #313244;border-radius:10px;padding:1.5rem;font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:0.9rem;line-height:1.8;white-space:pre;color:#a6e3a1;"><span class="comment"># Prerequisites: Python 3.10+, llama.cpp compiled</span>
-$ pip install vibethinker
-$ vibe setup
+<section id="install" style="margin:clamp(2rem, 5vw, 3rem) 0;">
+   <h2 style="font-size:clamp(1.25rem, 3vw, 1.4rem);margin-bottom:1rem;color:#f0f6fc;">Installation</h2>
+   <div style="background:#161b22;border:1px solid #21262d;border-radius:12px;padding:clamp(1rem, 3vw, 1.5rem);font-family:'SF Mono','Fira Code','Cascadia Code',monospace;font-size:clamp(0.85rem, 2vw, 0.95rem);line-height:1.7;white-space:pre-wrap;color:#7ee787;overflow-x:auto;">
+<span class="comment"># Prerequisites: Python 3.10+, llama-cpp-python</span>
+$ pip install vibethinker &amp;&amp; vibe setup
 
 <span class="comment"># Or from source:</span>
 $ git clone https://github.com/bigknoxy/vibethinker
-$ cd vibethinker &amp;&amp; pip install -e .</div>
+$ cd vibethinker &amp;&amp; pip install -e .
    </div>
-</section>
+ </section>
 </main>
 <footer>Keep documentation in sync — <a href="https://github.com/bigknoxy/vibethinker">VibeThinker</a></footer>
 </body>

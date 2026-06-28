@@ -2,44 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>VibeThinker — How It Works</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; background: #1e1e2e; color: #cdd6f4; line-height: 1.6; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif; background: #0d1117; color: #e6edf3; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 nav { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem; }
-nav .logo { font-size: 1.3rem; font-weight: 800; color: #cba6f7; text-decoration: none; letter-spacing: -0.02em; }
+nav .logo { font-size: 1.4rem; font-weight: 800; color: #58a6ff; text-decoration: none; letter-spacing: -0.02em; padding: 0.5rem 0.75rem; }
 nav .links { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-nav .links a { color: #a6adc8; text-decoration: none; padding: 0.4rem 0.7rem; border-radius: 6px; font-size: 0.9rem; font-weight: 500; transition: all 0.15s; }
-nav .links a:hover, nav .links a.active { background: #313244; color: #cdd6f4; }
-header { border-bottom: 1px solid #313244; background: #181825; }
-main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
-h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1.5rem; color: #cdd6f4; letter-spacing: -0.02em; }
-h1 span { color: #cba6f7; }
-h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; color: #cdd6f4; }
+nav .links a { color: #8b949e; text-decoration: none; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; transition: all 0.15s; min-height: 44px; min-width: 44px; display: flex; align-items: center; }
+nav .links a:hover, nav .links a.active { background: #21262d; color: #e6edf3; }
+header { border-bottom: 1px solid #21262d; background: #161b22; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+main { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+@media (max-width: 480px) { main { padding: 1.5rem 0.75rem; } }
+h1 { font-size: clamp(1.75rem, 5vw, 2rem); font-weight: 800; margin-bottom: 1.5rem; color: #f0f6fc; letter-spacing: -0.02em; }
+h1 span { color: #58a6ff; background: linear-gradient(90deg, #58a6ff, #a371f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: clamp(1.25rem, 3vw, 1.4rem); font-weight: 700; margin: clamp(2rem, 5vw, 2.5rem) 0 1rem; color: #f0f6fc; }
 h2:first-of-type { margin-top: 0; }
-h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #cba6f7; }
-p { color: #a6adc8; margin-bottom: 1rem; line-height: 1.7; }
-a { color: #cba6f7; text-decoration: none; }
+h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #58a6ff; }
+p { color: #8b949e; margin-bottom: 1rem; line-height: 1.7; }
+a { color: #58a6ff; text-decoration: none; }
 a:hover { text-decoration: underline; }
-code { background: #313244; padding: 0.15em 0.4em; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.88em; }
-pre { background: #11111b; border: 1px solid #313244; border-radius: 10px; padding: 1.2rem; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.85rem; line-height: 1.55; color: #cdd6f4; margin: 1.2rem 0; }
-pre .c { color: #585b70; }
-pre .g { color: #a6e3a1; }
-pre .p { color: #cba6f7; }
-.card { background: #181825; border: 1px solid #313244; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+code { background: #21262d; padding: 0.15em 0.4em; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.88em; }
+pre { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: clamp(1rem, 2.5vw, 1.2rem); overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: clamp(0.75rem, 2vw, 0.85rem); line-height: 1.6; color: #e6edf3; margin: clamp(1rem, 3vw, 1.2rem) 0; }
+pre .g { color: #7ee787; }
+.card { background: #161b22; border: 1px solid #21262d; border-radius: 12px; padding: clamp(1.25rem, 3vw, 1.5rem); margin: clamp(1.5rem, 4vw, 2rem) 0; }
 .card h3 { margin-top: 0; }
-.card strong { color: #cdd6f4; }
-.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-.spec { background: #11111b; border: 1px solid #313244; border-radius: 8px; padding: 1rem; text-align: center; }
-.spec .val { font-size: 1.4rem; font-weight: 700; color: #a6e3a1; }
-.spec .lbl { color: #a6adc8; font-size: 0.85rem; margin-top: 0.25rem; }
-ul, ol { color: #a6adc8; margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.7; }
+.card strong { color: #f0f6fc; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: clamp(0.75rem, 2vw, 1rem); margin: clamp(1.5rem, 4vw, 2rem) 0; }
+.spec { background: #21262d; border: 1px solid #323a46; border-radius: 8px; padding: clamp(0.75rem, 2vw, 1rem); text-align: center; }
+.spec .val { font-size: clamp(1.1rem, 2.5vw, 1.4rem); font-weight: 700; color: #7ee787; }
+.spec .lbl { color: #8b949e; font-size: clamp(0.75rem, 1.8vw, 0.85rem); margin-top: 0.25rem; }
+ul, ol { color: #8b949e; margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.7; }
 li { margin-bottom: 0.3rem; }
-footer { border-top: 1px solid #313244; text-align: center; padding: 1.5rem; color: #585b70; font-size: 0.85rem; margin-top: 3rem; }
-footer a { color: #585b70; text-decoration: none; }
-footer a:hover { color: #a6adc8; }
-@media (max-width: 640px) { h1 { font-size: 1.5rem; } nav { flex-direction: column; align-items: stretch; } nav .links { justify-content: center; } }
+footer { border-top: 1px solid #21262d; text-align: center; padding: 1.5rem; color: #484f58; font-size: 0.85rem; margin-top: 3rem; }
+footer a { color: #484f58; text-decoration: none; padding: 0.25rem 0; display: inline-block; }
+footer a:hover { color: #8b949e; }
+@media (max-width: 640px) { nav { flex-direction: column; align-items: stretch; padding: 0.75rem; } nav .links { justify-content: center; gap: 0.15rem; } }
+@media (max-width: 380px) { nav .links a { padding: 0.5rem 0.75rem; font-size: 0.9rem; } }
 </style>
 </head>
 <body>
@@ -59,25 +59,23 @@ footer a:hover { color: #a6adc8; }
 <main>
 <h1>How It <span>Works</span></h1>
 
-<p>VibeThinker loads a quantized 3.1B parameter model into memory and runs inference on CPU via <code>llama-cpp-python</code>. This page explains the internals: model loading, inference, stability mitigations, eval framework, and performance characteristics.</p>
+<p>VibeThinker runs a quantized 3.1B parameter model on CPU via <code>llama-cpp-python</code>. This page explains the internals: model loading, inference, and performance characteristics.</p>
 
-<h2>Model Loading</h2>
+<h2>Model Specs</h2>
 <div class="spec-grid">
   <div class="spec"><div class="val">3.1B</div><div class="lbl">Parameters</div></div>
   <div class="spec"><div class="val">Q8_0</div><div class="lbl">Quantization</div></div>
   <div class="spec"><div class="val">3.1 GB</div><div class="lbl">File Size</div></div>
   <div class="spec"><div class="val">~3.3 GB</div><div class="lbl">RAM Usage</div></div>
-   <div class="spec"><div class="val">4096</div><div class="lbl">Context (n_ctx)</div></div>
-  <div class="spec"><div class="val">2</div><div class="lbl">Threads (n_threads)</div></div>
-  <div class="spec"><div class="val">Qwen2</div><div class="lbl">Architecture</div></div>
+  <div class="spec"><div class="val">2048</div><div class="lbl">Context (n_ctx)</div></div>
+  <div class="spec"><div class="val">2</div><div class="lbl">Threads</div></div>
+  <div class="spec"><div class="val">Qwen2.5</div><div class="lbl">Architecture</div></div>
   <div class="spec"><div class="val">CPU</div><div class="lbl">Backend</div></div>
 </div>
 
-<p>The worker loads the GGUF file using <code>llama-cpp-python</code>'s <code>Llama</code> class with <code>n_ctx=4096</code> and <code>n_threads=2</code>. On an i5-6500T (2 cores, 4 threads) this uses approximately 3.3 GB of resident memory. The model stays loaded only for the duration of a single request; the worker process exits after generating the response.</p>
-
 <h2>Inference</h2>
 
-<p>Inference runs on the CPU backend of <code>llama-cpp-python</code> (ggml CPU backend). Typical throughput is <strong>~2 tokens/second</strong> on a 2-core i5-6500T. Responses are structured in a think-tag format:</p>
+<p>Inference runs on CPU. Typical throughput is <strong>~2 tokens/second</strong> on a 2-core CPU. The model outputs structured responses:</p>
 
 <pre>&lt;think&gt;The user wants a fibonacci generator in Rust.
 I'll write a function using an iterative approach
@@ -90,55 +88,18 @@ with pattern matching for the base cases.&lt;/think&gt;
     }
 }</span></pre>
 
-<p>The <code>&lt;think&gt;</code> section contains the model's internal reasoning. Most commands strip this tag before displaying output (use <code>--no-think</code> to suppress thinking, or <code>vibe think</code> to show only the reasoning).</p>
-
-<h2>Stability</h2>
-
-<p>The ggml CPU backend has a known segfault issue after approximately <strong>12-15 consecutive requests</strong>. This is a limitation of the llama.cpp CPU backend and not specific to VibeThinker. Three layers of mitigation are in place:</p>
-
-<div class="card">
-  <h3>1. Watchdog Auto-Restart</h3>
-  <p><strong>watchdog.sh</strong> polls <code>GET /v1/models</code> every 10 seconds. If the endpoint fails 3 times in a row (~30s detection window), it kills and restarts the server process. Total downtime: ~40 seconds worst case.</p>
-</div>
-
-<div class="card">
-  <h3>2. CLI Retry with Exponential Backoff</h3>
-  <p>When the CLI receives a connection error or 5xx response, it retries with exponential backoff: <strong>5s → 10s → 20s</strong>. After three failures it gives up with a clear error message. This masks brief restarts transparently.</p>
-</div>
-
-<div class="card">
-  <h3>3. Systemd Restart</h3>
-  <p>The <strong>vibethinker.service</strong> systemd unit uses <code>Restart=on-failure</code>. If the server exits unexpectedly and the watchdog hasn't already restarted it, systemd will bring it back. Boot survival is guaranteed.</p>
-</div>
-
-<h2>Eval Framework</h2>
-
-<p>The built-in <code>vibe eval</code> command runs a suite of 27 tasks across 8 categories to measure model performance. Four grader types are supported:</p>
-
-<ul>
-  <li><strong>exact</strong> — Exact string match against expected output</li>
-  <li><strong>exact_raw</strong> — Searches the raw response (before think-tag stripping) to catch answers embedded in reasoning</li>
-  <li><strong>code</strong> — Compiles or interprets generated code and checks output</li>
-  <li><strong>rubric</strong> — LLM-graded rubric for open-ended tasks</li>
-</ul>
-
-<h3>The exact_raw Fix</h3>
-<p>The <code>exact_raw</code> grader was introduced because the model sometimes embeds the final answer inside the <code>&lt;think&gt;</code> reasoning block. Standard think-tag stripping would remove the answer. <code>exact_raw</code> searches the entire raw response before stripping, catching answers that would otherwise be missed.</p>
-
-<p>Eval results are generated as HTML reports with per-task pass/fail breakdowns. The current pass rate is <strong>96% across 27 tasks</strong>.</p>
+<p>The <code>&lt;think&gt;</code> section contains the model's reasoning. Most commands strip this tag. Use <code>--no-think</code> to suppress, or <code>vibe think</code> to show only reasoning.</p>
 
 <h2>Performance</h2>
 
-<p>End-to-end request latency depends on <code>max_tokens</code>. Typical ranges on an i5-6500T (2 cores):</p>
-
 <ul>
-  <li><strong>Short prompts</strong> (50-100 output tokens): ~25-50 seconds</li>
-  <li><strong>Medium prompts</strong> (100-250 output tokens): ~50-125 seconds</li>
-  <li><strong>Long prompts</strong> (250-500 output tokens): ~125-250 seconds</li>
+  <li><strong>First request</strong>: ~70s (model load + inference)</li>
+  <li><strong>Cache hit</strong>: ~2ms (instant via LRU cache)</li>
+  <li><strong>Throughput</strong>: ~2 tokens/second on 2-core CPU</li>
 </ul>
 
-<p>Throughput is bound by the CPU backend's single-core token generation. Future work may explore GPU offloading via llama.cpp's CUDA or Metal backends.</p>
+<p>The LRU cache (128 entries, 5min TTL) provides dramatic speedups for repeated queries.</p>
 </main>
-<footer>Keep documentation in sync &mdash; <a href="https://github.com/your-org/vibethinker">VibeThinker</a></footer>
+<footer>Keep documentation in sync — <a href="https://github.com/bigknoxy/vibethinker">VibeThinker</a></footer>
 </body>
 </html>
