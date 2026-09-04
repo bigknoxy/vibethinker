@@ -1,0 +1,22 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '15 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  security:
+    uses: bigknoxy/.github/.github/workflows/security-reusable.yml@main
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+    with:
+      language: none
+      codeql_language: python
+      has_docker: false
+    secrets: inherit
