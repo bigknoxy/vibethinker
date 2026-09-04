@@ -16,6 +16,7 @@ jobs:
       security-events: write
       pull-requests: write
     with:
-      language: python
+      language: none
+      codeql_language: python
       has_docker: false
     secrets: inherit
